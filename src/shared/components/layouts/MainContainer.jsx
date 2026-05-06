@@ -2,12 +2,13 @@ import React from 'react'
 import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
 
-export const DashboardContainer = ({ children }) => {
+export const MainContainer = ({ children }) => {
   return (
     <div className='min-h-screen bg-bg-dark flex flex-col text-text-body'>
-      <Navbar />
+      <Navbar/>
       <div className='flex flex-1'>
-        <Sidebar />
+        <Sidebar/>
+
         <main className='flex-1 p-6 md:p-8 overflow-x-hidden'>
           {children}
         </main>
