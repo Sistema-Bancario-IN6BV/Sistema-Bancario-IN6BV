@@ -26,7 +26,7 @@ body {
 
 /* ===================== LOGIN ===================== */
 .login-wrapper {
-  min-height: 100vh;
+  min-height: auto;
   width: 100%;
   display: flex;
   align-items: center;
@@ -310,12 +310,12 @@ body {
 
 /* ===================== REGISTER ===================== */
 .register-wrapper {
-  min-height: 100vh;
+  min-height: auto;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 16px;
+  padding: 0;
 }
 
 .register-card {

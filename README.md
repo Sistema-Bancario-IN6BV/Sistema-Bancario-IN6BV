@@ -1,16 +1,53 @@
-# React + Vite
+# 🏦 Sistema Bancario IN6BV - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema de gestión bancaria moderna con React 18, Vite y Tailwind CSS.
 
-Currently, two official plugins are available:
+## 📋 Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+✅ **Autenticación segura** con JWT  
+✅ **Dashboard** con estadísticas  
+✅ **Gestión de cuentas** bancarias  
+✅ **Transacciones** en tiempo real  
+✅ **Notificaciones** con React Hot Toast  
+✅ **Protección de rutas** automática  
+✅ **Diseño responsive**
 
-## React Compiler
+## 🚀 Quick Start
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+pnpm install
+cp .env.example .env.local
+pnpm run dev
+```
 
-## Expanding the ESLint configuration
+Abre `http://localhost:5173`
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 📦 Scripts
+
+```bash
+pnpm run dev      # Desarrollo
+pnpm run build    # Producción
+pnpm run lint     # Linter
+```
+
+## 🧪 Testing
+
+```powershell
+.\tests\test-integration.ps1
+```
+
+## 📡 Servicios Requeridos
+
+- Auth Service (3001)
+- Admin API (3002)
+
+## ⚙️ Configuración
+
+Ver [SETUP.md](./SETUP.md) y `.env.example`
+
+## 📄 Licencia
+
+ISC
+
+---
+v1.0.0 | 6 Mayo 2026
