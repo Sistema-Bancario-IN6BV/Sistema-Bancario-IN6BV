@@ -1,6 +1,6 @@
 // RegisterCard.jsx
 import React, { useState } from 'react';
-import { useAuthStore } from '@/shared/store/authStore';
+import { useAuthStore } from '../store/authStore';
 
 const IconUser = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

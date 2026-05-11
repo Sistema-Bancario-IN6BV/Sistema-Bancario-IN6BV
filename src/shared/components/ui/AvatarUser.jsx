@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuthStore } from "@/shared/store/authStore";
-const defaultAvatarImg = "https://api.dicebear.com/7.x/thumbs/svg?seed=default";
+import { useAuthStore } from "../../../features/auth/store/authStore";
+import defaultAvatarImg from "../../../assets/img/hero.png";
+
 export const AvatarUser = () => {
     const { user, logout } = useAuthStore();
     const [open, setOpen] = useState(false);
@@ -35,7 +36,7 @@ export const AvatarUser = () => {
     };
 
     const avatarSrc =
-        user?.profilePicture && user.profilePicture.trim() !== ""
+        user?.profilePicture && user.profilePicture.trim() !== "" && !user.profilePicture.includes("default-avatar_ewzxwx.png")
             ? user.profilePicture
             : defaultAvatarImg;
 
@@ -84,16 +85,33 @@ export const AvatarUser = () => {
                         <ul className="p-2 text-sm text-text-body font-medium tracking-wide">
                             <li>
                                 <Link
-                                    to="/dashboard"
-                                    className="block w-full p-2.5 rounded-lg hover:bg-accent/10 hover:text-accent transition-colors mb-1"
+                                    to="/perfil"
+                                    className="flex items-center gap-2 w-full p-2.5 rounded-lg hover:bg-accent/10 hover:text-accent transition-colors mb-1"
                                 >
-                                    Dashboard
+                                    Mi Perfil
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/notificaciones"
+                                    className="flex items-center gap-2 w-full p-2.5 rounded-lg hover:bg-accent/10 hover:text-accent transition-colors mb-1"
+                                >
+                                    Notificaciones
+                                </Link>
+                            </li>
+                            <div className="border-t border-accent/10 my-1" />
+                            <li>
+                                <Link
+                                    to="/panel"
+                                    className="flex items-center gap-2 w-full p-2.5 rounded-lg hover:bg-accent/10 hover:text-accent transition-colors mb-1"
+                                >
+                                    Panel
                                 </Link>
                             </li>
                             {user?.role === "PLATFORM_ADMIN" && (
                                 <li>
                                     <Link
-                                        to="/dashboard/users"
+                                        to="/panel/users"
                                         className="block w-full p-2.5 rounded-lg hover:bg-accent/10 hover:text-accent transition-colors mb-2"
                                     >
                                         Usuarios

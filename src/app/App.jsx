@@ -1,22 +1,29 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import LoginCard from '../features/auth/components/LoginCard';
-import RegisterCard from '../features/auth/components/RegisterCard';
-import { DashboardContainer } from '../shared/components/layout/DashboardContainer';
-import { useAuthStore } from '../shared/store/authStore';
+import { AppRoutes } from './router/AppRoutes';
+import { useAuthStore } from '../features/auth/store/authStore';
 
 function App() {
-  const [view, setView] = useState('login');
-  const { isAuthenticated } = useAuthStore();
+  const { isLoadingAuth, checkAuth } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  if (isLoadingAuth) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-500 to-blue-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white font-semibold">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <BrowserRouter>
-      {isAuthenticated
-        ? <DashboardContainer />
-        : view === 'login'
-          ? <LoginCard onGoRegister={() => setView('register')} />
-          : <RegisterCard onGoLogin={() => setView('login')} />
-      }
+      <AppRoutes />
     </BrowserRouter>
   );
 }

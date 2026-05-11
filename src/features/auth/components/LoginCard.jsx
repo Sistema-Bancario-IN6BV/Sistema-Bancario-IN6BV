@@ -1,17 +1,22 @@
 // LoginCard.jsx
 import React, { useState } from 'react';
-import { useAuthStore } from '@/shared/store/authStore';
+import { useAuthStore } from '../store/authStore';
+import { useNavigate } from 'react-router-dom';
 
 const LoginCard = ({ onGoRegister }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const { login, loading, error, clearError } = useAuthStore();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     clearError();
-    await login({ emailOrUsername, password });
+    const result = await login({ emailOrUsername, password });
+    if (result?.success) {
+      navigate('/panel', { replace: true });
+    }
   };
 
   return (
