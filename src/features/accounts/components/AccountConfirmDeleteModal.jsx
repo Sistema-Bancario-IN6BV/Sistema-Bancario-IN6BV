@@ -1,55 +1,77 @@
+// AccountConfirmDeleteModal.jsx — REDISEÑO VISUAL · Lógica intacta
 import { useMemo } from "react";
 import { useUIStore } from "../../../shared/components/ui/store/uiStore";
 
+const IconAlertTriangle = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+        <path d="M12 9v4"/><path d="M12 17h.01"/>
+    </svg>
+);
+
+const IconX = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+        <path d="M18 6 6 18M6 6l12 12"/>
+    </svg>
+);
+
 export const AccountConfirmDeleteModal = () => {
-  const { confirmModal, closeConfirm } = useUIStore();
+    /* — useUIStore original intacto — */
+    const { confirmModal, closeConfirm } = useUIStore();
 
-  const title = confirmModal.title || "Confirmar";
-  const message = confirmModal.message || "¿Estás seguro?";
+    const title   = confirmModal.title   || "Confirmar";
+    const message = confirmModal.message || "¿Estás seguro?";
 
-  const dangerGradient = useMemo(
-    () =>
-      "linear-gradient(90deg, rgba(220,38,38,1) 0%, rgba(239,68,68,1) 100%)",
-    []
-  );
+    if (!confirmModal.isOpen) return null;
 
-  if (!confirmModal.isOpen) return null;
+    return (
+        <div className="modal-overlay">
+            <div className="modal narrow">
+                {/* Header */}
+                <div className="modal-header-danger">
+                    <div className="modal-header-info">
+                        <h2 className="modal-title on-dark">{title}</h2>
+                    </div>
+                    <button
+                        className="modal-close on-dark"
+                        type="button"
+                        onClick={closeConfirm}
+                        aria-label="Cerrar"
+                    >
+                        <IconX />
+                    </button>
+                </div>
 
+                {/* Body */}
+                <div className="confirm-body">
+                    <div className="confirm-icon">
+                        <IconAlertTriangle />
+                    </div>
+                    <p className="confirm-message">{message}</p>
+                </div>
 
-  return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 px-3 sm:px-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm md:max-w-md flex flex-col overflow-hidden">
-        <div
-          className="p-4 sm:p-5 text-white sticky top-0 z-10"
-          style={{ background: dangerGradient }}
-        >
-          <h2 className="text-xl sm:text-2xl font-bold">{title}</h2>
+                {/* Footer */}
+                <div className="modal-footer">
+                    <button
+                        type="button"
+                        onClick={closeConfirm}
+                        className="btn-secondary"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            confirmModal.onConfirm?.();
+                            closeConfirm();
+                        }}
+                        className="btn-danger"
+                        style={{ background: 'var(--color-danger)', color: '#fff', borderColor: 'var(--color-danger)' }}
+                    >
+                        Confirmar
+                    </button>
+                </div>
+            </div>
         </div>
-
-        <div className="p-4 sm:p-6">
-          <p className="text-gray-700 text-center mb-6">{message}</p>
-
-          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t">
-            <button
-              onClick={closeConfirm}
-              className="w-full sm:w-auto px-4 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition"
-            >
-              Cancelar
-            </button>
-
-            <button
-              onClick={() => {
-                confirmModal.onConfirm?.();
-                closeConfirm();
-              }}
-              className="w-full sm:w-auto px-5 py-2 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition shadow"
-            >
-              Confirmar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
-
