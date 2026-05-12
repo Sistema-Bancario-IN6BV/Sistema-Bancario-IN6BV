@@ -16,31 +16,32 @@ import {
 } from "@heroicons/react/24/outline";
 
 const menuItemsByRole = {
+    // Mapa del dashboard para este sistema bancario.
+    // Se mantiene la estructura por rol, pero los labels/rutas deben coincidir con el panel.
     PLATFORM_ADMIN: [
-        { label: "Inicio", to: "/panel", icon: ChartBarIcon },
-        { label: "Restaurantes", to: "/panel/restaurants", icon: BuildingStorefrontIcon },
+        { label: "Cuentas", to: "/panel", icon: ChartBarIcon },
+        { label: "Transacciones", to: "/panel/transactions", icon: TableCellsIcon },
         { label: "Usuarios", to: "/panel/users", icon: UsersIcon },
+        { label: "Productos", to: "/panel/products", icon: ShoppingBagIcon },
         { label: "Reportes", to: "/panel/reports", icon: ChartPieIcon },
     ],
+    // Segundo rol (según la app). Ajustado para que también apunte a las rutas bancarias.
     RESTAURANT_ADMIN: [
-        { label: "Inicio", to: "/panel", icon: ChartBarIcon },
-        { label: "Pedidos", to: "/panel/orders", icon: ShoppingBagIcon },
-        { label: "Menú", to: "/panel/menu", icon: BookOpenIcon },
-        { label: "Mesas", to: "/panel/tables", icon: TableCellsIcon },
-        { label: "Reservas", to: "/panel/reservations", icon: CalendarDaysIcon },
-        { label: "Facturas", to: "/panel/invoices", icon: ReceiptPercentIcon },
-        { label: "Inventario", to: "/panel/inventory", icon: InboxStackIcon },
-        { label: "Ingredientes", to: "/panel/ingredients", icon: BeakerIcon },
+        { label: "Cuentas", to: "/panel", icon: ChartBarIcon },
+        { label: "Transacciones", to: "/panel/transactions", icon: TableCellsIcon },
+        { label: "Usuarios", to: "/panel/users", icon: UsersIcon },
+        { label: "Productos", to: "/panel/products", icon: ShoppingBagIcon },
         { label: "Reportes", to: "/panel/reports", icon: ChartPieIcon },
     ],
+    // Customer: si está restringido al panel, usa el mismo set de rutas.
     CUSTOMER: [
-        { label: "Inicio", to: "/home", icon: HomeIcon },
-        { label: "Restaurantes", to: "/restaurants", icon: BuildingStorefrontIcon },
-        { label: "Mis Reservas", to: "/panel/reservations", icon: CalendarDaysIcon },
-        { label: "Mis Pedidos", to: "/panel/orders", icon: ShoppingBagIcon },
-        { label: "Mis Facturas", to: "/panel/invoices", icon: ReceiptPercentIcon },
+        { label: "Cuentas", to: "/panel", icon: HomeIcon },
+        { label: "Transacciones", to: "/panel/transactions", icon: TableCellsIcon },
+        { label: "Productos", to: "/panel/products", icon: ShoppingBagIcon },
+        { label: "Reportes", to: "/panel/reports", icon: ChartPieIcon },
     ],
 };
+
 
 export const Sidebar = () => {
     const location = useLocation();
