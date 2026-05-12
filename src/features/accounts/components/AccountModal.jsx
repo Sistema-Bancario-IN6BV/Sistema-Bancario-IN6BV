@@ -32,14 +32,25 @@ const IconShield = () => (
     </svg>
 );
 
-export const AccountModal = ({ mode, isOpen, initialValues, onClose, onSubmit, loading }) => {
+export const AccountModal = ({ mode, isOpen, initialValues, onClose, onSubmit, loading, users = [] }) => {
     const [form, setForm] = useState({
         externalUserId: "",
         balance: "",
         accountNumber: "",
         status: "ACTIVE",
     });
+    const [searchUser, setSearchUser] = useState("");
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+    const filteredUsers = useMemo(() => {
+        if (!searchUser) return users;
+        const lowerSearch = searchUser.toLowerCase();
+        return users.filter(u => {
+            const fullName = `${u.name || ''} ${u.surname || ''}`.toLowerCase();
+            const dpi = String(u.dpi || '').toLowerCase();
+            return fullName.includes(lowerSearch) || dpi.includes(lowerSearch);
+        });
+    }, [users, searchUser]);
     /* — useEffect original intacto — */
     useEffect(() => {
         if (!isOpen) return;
@@ -74,6 +85,15 @@ export const AccountModal = ({ mode, isOpen, initialValues, onClose, onSubmit, l
             onSubmit?.({ ok: false, error: "externalUserId requerido" });
             return;
         }
+
+        if (mode === "create" && users.length > 0) {
+            const userExists = users.some(u => u.uid === form.externalUserId || u.id === form.externalUserId);
+            if (!userExists) {
+                onSubmit?.({ ok: false, error: "El ID de usuario ingresado no existe en la base de datos." });
+                return;
+            }
+        }
+
         const payload = {
             externalUserId: form.externalUserId || undefined,
             balance: balanceNum,
@@ -113,14 +133,54 @@ export const AccountModal = ({ mode, isOpen, initialValues, onClose, onSubmit, l
 
                         {/* externalUserId */}
                         {mode === "create" ? (
-                            <div className="modal-field">
-                                <label className="modal-label"><IconUser /> ID de Usuario</label>
+                            <div className="modal-field" style={{ position: 'relative' }}>
+                                <label className="modal-label"><IconUser /> Buscar Usuario (Nombre, Apellido o DPI)</label>
                                 <input
                                     className="modal-input"
-                                    value={form.externalUserId}
-                                    onChange={(e) => setForm((f) => ({ ...f, externalUserId: e.target.value }))}
-                                    placeholder="Ej: 123456..."
+                                    value={searchUser}
+                                    onChange={(e) => {
+                                        setSearchUser(e.target.value);
+                                        const exactMatch = users.find(u => 
+                                            u.uid === e.target.value || 
+                                            u.id === e.target.value || 
+                                            u.dpi === e.target.value
+                                        );
+                                        setForm((f) => ({ ...f, externalUserId: exactMatch ? (exactMatch.uid || exactMatch.id) : "" }));
+                                    }}
+                                    onFocus={() => setIsDropdownOpen(true)}
+                                    placeholder="Escribe para buscar..."
+                                    autoComplete="off"
                                 />
+                                {isDropdownOpen && (
+                                    <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10, background: '#fff', border: '1px solid #ced6e0', borderRadius: '5px', maxHeight: '200px', overflowY: 'auto', boxShadow: '0px 10px 20px -13px rgba(32, 56, 117, 0.35)' }}>
+                                        {filteredUsers.length > 0 ? filteredUsers.map((u) => (
+                                            <div 
+                                                key={u.uid || u.id} 
+                                                onClick={() => {
+                                                    const idToUse = u.uid || u.id;
+                                                    setSearchUser(`${u.name || ''} ${u.surname || ''} - DPI: ${u.dpi || 'N/A'}`);
+                                                    setForm((f) => ({ ...f, externalUserId: idToUse }));
+                                                    setIsDropdownOpen(false);
+                                                }}
+                                                style={{ padding: '10px 15px', borderBottom: '1px solid #eee', cursor: 'pointer', color: '#1a3b5d' }}
+                                                onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f8fb'}
+                                                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                                            >
+                                                <strong>{u.name} {u.surname}</strong> <br/>
+                                                <small style={{ color: '#4A6278' }}>DPI: {u.dpi || 'N/A'}</small>
+                                            </div>
+                                        )) : (
+                                            <div style={{ padding: '10px 15px', color: '#4A6278' }}>No se encontraron usuarios...</div>
+                                        )}
+                                    </div>
+                                )}
+                                {/* Overlay to close dropdown on outside click */}
+                                {isDropdownOpen && (
+                                    <div 
+                                        style={{ position: 'fixed', inset: 0, zIndex: 9 }} 
+                                        onClick={() => setIsDropdownOpen(false)}
+                                    ></div>
+                                )}
                             </div>
                         ) : (
                             <div className="modal-field">
@@ -128,17 +188,6 @@ export const AccountModal = ({ mode, isOpen, initialValues, onClose, onSubmit, l
                                 <input className="modal-input" value={form.externalUserId} readOnly disabled />
                             </div>
                         )}
-
-                        {/* Número de cuenta */}
-                        <div className="modal-field">
-                            <label className="modal-label"><IconHash /> Número de cuenta</label>
-                            <input
-                                className="modal-input"
-                                value={form.accountNumber}
-                                onChange={(e) => setForm((f) => ({ ...f, accountNumber: e.target.value }))}
-                                placeholder="Se autogenera si se deja vacío"
-                            />
-                        </div>
 
                         {/* Saldo */}
                         <div className="modal-field">

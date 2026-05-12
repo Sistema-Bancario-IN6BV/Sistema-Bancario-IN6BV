@@ -11,8 +11,14 @@ export const register = async (formData) => {
 };
 
 export const getAllUsers = async () => {
-    const { data } = await axiosAuth.get("/auth/users");
-    return { users: data };
+    try {
+        const { data: clientUsers } = await axiosAuth.get("/users/by-role/USER_ROLE");
+        const { data: adminUsers } = await axiosAuth.get("/users/by-role/ADMIN_ROLE");
+        return { users: [...clientUsers, ...adminUsers] };
+    } catch (e) {
+        // Fallback or bubble error
+        throw e;
+    }
 };
 
 export const updateUserRole = async (userId, roleName) => {
