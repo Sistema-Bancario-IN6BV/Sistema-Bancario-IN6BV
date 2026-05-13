@@ -5,10 +5,14 @@ import { showError, showSuccess } from "../../../shared/utils/toast";
 import { Spinner } from "../../../shared/components/layouts/Spinner";
 
 import { useAccountStore } from "../store/useAccountStore";
+import { useUserManagmentStore } from "../../users/store/useUserManagmentStore";
 
 import { AccountModal } from "./AccountModal.jsx";
 import { useUIStore } from "../../../shared/components/ui/store/uiStore";
 import { AccountConfirmDeleteModal } from "./AccountConfirmDeleteModal.jsx";
+import "../../../styles/credit-card.css";
+import { CreditCardItem } from "./CreditCardItem.jsx";
+import { PencilSquareIcon, NoSymbolIcon } from "@heroicons/react/24/outline";
 
 export const Accounts = () => {
 
@@ -22,6 +26,8 @@ export const Accounts = () => {
     deleteAccount,
   } = useAccountStore();
 
+  const { users = [], fetchUsers } = useUserManagmentStore();
+
   const { user } = useAuthStore();
   const { openConfirm } = useUIStore();
 
@@ -32,6 +38,7 @@ export const Accounts = () => {
 
   useEffect(() => {
     getAccounts().catch(() => {});
+    fetchUsers().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -171,68 +178,35 @@ export const Accounts = () => {
           {accounts.map((account) => {
             const accountId = account._id ?? account.id;
             const allowEdit = user?.id && account.externalUserId === user.id;
+            const accountOwner = users.find(u => u.uid === account.externalUserId || u.id === account.externalUserId);
 
             return (
               <div
                 key={accountId}
                 className="bg-white rounded-3xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-[#E7EEF5] hover:-translate-y-1"
               >
-                <div className="bg-gradient-to-r from-[#0A2540] to-[#1A4B8C] px-8 py-8 relative">
-                  <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center text-3xl text-white shadow-lg">
-                    💳
-                  </div>
-
-                  <div className="mt-6">
-                    <p className="text-[#AFC8F5] tracking-wide">Número de cuenta</p>
-                    <h2 className="text-2xl font-bold text-white tracking-wider mt-1">
-                      {account.accountNumber ?? "-"}
-                    </h2>
-                  </div>
-
-                  <div className="absolute top-6 right-6">
-                    <span
-                      className={`px-4 py-1 rounded-full text-xs font-semibold tracking-wide ${statusBadgeClass(
-                        account.status
-                      )}`}
-                    >
-                      {account.status ?? "-"}
-                    </span>
-                  </div>
+                <div className="flex justify-center pt-8 pb-4" onClick={() => handleOpenEdit(account)} style={{ cursor: 'pointer' }}>
+                  <CreditCardItem account={account} accountOwner={accountOwner} statusBadgeClass={statusBadgeClass} />
                 </div>
 
                 <div className="p-7">
-                  <div className="mb-6">
-                    <p className="text-xl text-[#4A6278] mb-2">Saldo Disponible</p>
-                    <h3 className="text-4xl font-bold text-[#0A2540] tracking-tight">
-                      ${account.balance ?? 0}
-                    </h3>
-                  </div>
-
-                  <div className="bg-[#F5F8FB] rounded-2xl p-4 border border-[#E7EEF5]">
-                    <p className="text-m uppercase tracking-wide text-[#4A6278] mb-1">
-                      Usuario Vinculado
-                    </p>
-                    <p className="text-lg text-[#0A2540] font-semibold">
-                      {account.externalUserId ?? "-"}
-                    </p>
-                  </div>
-
-                  <div className="flex gap-3 mt-7">
+                  <div className="flex gap-4">
                     <button
-                      className={`flex-1 py-3 rounded-2xl font-medium transition-all duration-300 shadow-sm ${
+                      className={`flex items-center justify-center gap-2 flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 ${
                         allowEdit
-                          ? "bg-[#1A4B8C] hover:bg-[#2E6FD4] text-white"
-                          : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                          ? "bg-[#F8FAFC] text-[#1A4B8C] border border-[#E2E8F0] hover:bg-[#F1F5F9] hover:border-[#CBD5E1]"
+                          : "bg-gray-50 text-gray-400 border border-gray-100 cursor-not-allowed"
                       }`}
                       onClick={() => handleOpenEdit(account)}
                       disabled={!allowEdit}
                       title={!allowEdit ? "Solo puedes editar tu propia cuenta" : "Editar"}
                     >
-                      ✏️ Editar
+                      <PencilSquareIcon className="w-5 h-5" strokeWidth={2} />
+                      Editar
                     </button>
 
                     <button
-                      className="flex-1 py-3 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-medium transition-all duration-300 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center justify-center gap-2 flex-1 py-2.5 rounded-xl bg-red-50 text-red-600 border border-red-100 hover:bg-red-100 hover:border-red-200 transition-all duration-300 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={() => handleDelete(account)}
                       disabled={user?.role !== "ADMIN_ROLE"}
                       title={
@@ -241,7 +215,8 @@ export const Accounts = () => {
                           : "Desactivar"
                       }
                     >
-                      🚫 Desactivar
+                      <NoSymbolIcon className="w-5 h-5" strokeWidth={2} />
+                      Desactivar
                     </button>
                   </div>
                 </div>
@@ -256,6 +231,7 @@ export const Accounts = () => {
         isOpen={createOpen}
         loading={loading}
         initialValues={null}
+        users={users}
         onClose={() => setCreateOpen(false)}
         onSubmit={handleCreateSubmit}
       />
